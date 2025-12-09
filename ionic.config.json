@@ -1,0 +1,7 @@
+{
+  "name": "ionic-react-router-6-test",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
