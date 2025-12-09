@@ -5,6 +5,7 @@ interface ContainerProps {
 }
 
 const ExploreContainer: React.FC<ContainerProps> = ({ name }) => {
+  console.log('explore container render');
   return (
     <div className="container">
       <strong>{name}</strong>
