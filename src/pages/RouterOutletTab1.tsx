@@ -34,6 +34,39 @@ const RouterOutletTab1: React.FC = () => {
             </IonPage>
           }
         />
+        <Route
+          path="def"
+          element={
+            <IonPage>
+              <IonHeader>
+                <IonToolbar>
+                  <IonButtons>
+                    <IonBackButton />
+                  </IonButtons>
+                </IonToolbar>
+              </IonHeader>
+              <IonContent>
+                <p>DEF</p>
+              </IonContent>
+            </IonPage>
+          }
+        />
+        <Route path="abc/:uuid"
+          element={
+            <IonPage>
+              <IonHeader>
+                <IonToolbar>
+                  <IonButtons>
+                    <IonBackButton />
+                  </IonButtons>
+                </IonToolbar>
+              </IonHeader>
+              <IonContent>
+                <p>ABC UUID</p>
+              </IonContent>
+            </IonPage>
+          }
+          />
       </IonRouterOutlet>
     </IonPage>
   );

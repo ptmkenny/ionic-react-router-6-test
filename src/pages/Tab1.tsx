@@ -26,6 +26,8 @@ const Tab1: React.FC = () => {
         <ExploreContainer name="Tab 1 page" />
         <Link to="abc">ABC Page (relative) </Link>
         <Link to="/tab1/abc">ABC Page (absolute)</Link>
+        <Link to="def">DEF Page (relative) </Link>
+        <Link to="/tab1/def">DEF Page (absolute)</Link>
       </IonContent>
     </IonPage>
   );

@@ -1,6 +1,7 @@
 How to reproduce:
 
 1. `npm run dev`
-2. Try to go to http://localhost:5173/no-tab. Nothing will be displayed.
-3. Edit App.tsx to put a slash in front of the path for no-tab: `/no-tab`
-4. Refresh http://localhost:5173/no-tab, and you will see the text "no tabs"
+2. Try to go to http://localhost:5173/tab1
+3. Click `ABC Page (Relative)`. You will go to the ABC page, but the URL is `http://localhost:5174/tab1/tab1/abc`, when it should be `http://localhost:5174/tab1/abc`.
+4. Go back and click `ABC Page (Absolute)`. You will get a 404.
+5. If you delete 404 route, the `ABC Page (Absolute)` link works.

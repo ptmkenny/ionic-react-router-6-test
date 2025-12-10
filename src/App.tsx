@@ -68,10 +68,16 @@ const App: React.FC = () => (
           element={
             <IonTabs>
               <IonRouterOutlet>
-                <Route path="/tab1/*" element={<RouterOutletTab1 />} />
+                <Route path="tab1/*" element={<RouterOutletTab1 />} />
                 <Route path="tab2" element={<Tab2 />} />
-                <Route path="/tab3" element={<Tab3 />} />
+                <Route path="tab3" element={<Tab3 />} />
                 <Route path="/" element={<Navigate to="/tab1" />} />
+                {/* The present of this 404 route causes absolute links to fail to resolve */}
+                <Route path="*" element={<IonPage>
+                  <IonContent>
+                    <p>404</p>
+                  </IonContent>
+                </IonPage>} />
               </IonRouterOutlet>
               <IonTabBar slot="bottom">
                 <IonTabButton tab="tab1" href="/tab1">
