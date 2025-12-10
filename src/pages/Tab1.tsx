@@ -1,6 +1,13 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab1.css';
+import { Link } from 'react-router-dom';
 
 const Tab1: React.FC = () => {
   return (
@@ -17,6 +24,8 @@ const Tab1: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Tab 1 page" />
+        <Link to="abc">ABC Page (relative) </Link>
+        <Link to="/tab1/abc">ABC Page (absolute)</Link>
       </IonContent>
     </IonPage>
   );

@@ -1,4 +1,12 @@
-import { IonContent, IonPage, IonRouterOutlet } from '@ionic/react';
+import {
+  IonBackButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonRouterOutlet,
+  IonToolbar,
+} from '@ionic/react';
 import './Tab1.css';
 import Tab1 from './Tab1';
 import { Route } from 'react-router';
@@ -13,6 +21,13 @@ const RouterOutletTab1: React.FC = () => {
           path="abc"
           element={
             <IonPage>
+              <IonHeader>
+                <IonToolbar>
+                  <IonButtons>
+                    <IonBackButton />
+                  </IonButtons>
+                </IonToolbar>
+              </IonHeader>
               <IonContent>
                 <p>ABC</p>
               </IonContent>
