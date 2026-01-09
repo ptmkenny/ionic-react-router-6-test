@@ -9,7 +9,7 @@ import {
 } from '@ionic/react';
 import './Tab1.css';
 import Tab1 from './Tab1';
-import { Route, Routes } from 'react-router';
+import { Route } from 'react-router';
 
 const RouterOutletTab1: React.FC = () => {
   console.log('loaded RouterOutletTab1');
@@ -24,7 +24,7 @@ const RouterOutletTab1: React.FC = () => {
               <IonHeader>
                 <IonToolbar>
                   <IonButtons>
-                    <IonBackButton />
+                    <IonBackButton defaultHref='tab1' />
                   </IonButtons>
                 </IonToolbar>
               </IonHeader>
@@ -41,7 +41,7 @@ const RouterOutletTab1: React.FC = () => {
               <IonHeader>
                 <IonToolbar>
                   <IonButtons>
-                    <IonBackButton />
+                    <IonBackButton defaultHref='tab1' />
                   </IonButtons>
                 </IonToolbar>
               </IonHeader>
@@ -58,7 +58,7 @@ const RouterOutletTab1: React.FC = () => {
               <IonHeader>
                 <IonToolbar>
                   <IonButtons>
-                    <IonBackButton />
+                    <IonBackButton defaultHref='tab1' />
                   </IonButtons>
                 </IonToolbar>
               </IonHeader>
