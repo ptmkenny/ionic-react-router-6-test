@@ -9,7 +9,7 @@ import {
 } from '@ionic/react';
 import './Tab1.css';
 import Tab1 from './Tab1';
-import { Route } from 'react-router';
+import { Route, Routes } from 'react-router';
 
 const RouterOutletTab1: React.FC = () => {
   console.log('loaded RouterOutletTab1');
@@ -51,7 +51,8 @@ const RouterOutletTab1: React.FC = () => {
             </IonPage>
           }
         />
-        <Route path="abc/:uuid"
+        <Route
+          path="abc/:uuid"
           element={
             <IonPage>
               <IonHeader>
@@ -66,7 +67,7 @@ const RouterOutletTab1: React.FC = () => {
               </IonContent>
             </IonPage>
           }
-          />
+        />
       </IonRouterOutlet>
     </IonPage>
   );
