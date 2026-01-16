@@ -17,14 +17,14 @@
     "@capacitor/haptics": "8.0.0",
     "@capacitor/keyboard": "8.0.0",
     "@capacitor/status-bar": "8.0.0",
-    "@ionic/core": "^8.7.12-dev.11765307927.1f491e92",
-    "@ionic/react": "^8.7.12-dev.11765307927.1f491e92",
-    "@ionic/react-router": "^8.7.12-dev.11765307927.1f491e92",
+    "@ionic/core": "^8.7.13-dev.11766090775.11e2bebb",
+    "@ionic/react": "^8.7.13-dev.11766090775.11e2bebb",
+    "@ionic/react-router": "^8.7.13-dev.11766090775.11e2bebb",
     "ionicons": "^7.4.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-router": "^6.30.2",
-    "react-router-dom": "^6.30.2"
+    "react-router": "^6.30.3",
+    "react-router-dom": "^6.30.3"
   },
   "devDependencies": {
     "@capacitor/cli": "8.0.0",

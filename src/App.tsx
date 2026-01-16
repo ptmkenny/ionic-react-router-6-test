@@ -1,10 +1,8 @@
 import { Navigate, Route } from 'react-router-dom';
 import {
   IonApp,
-  IonContent,
   IonIcon,
   IonLabel,
-  IonPage,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -12,10 +10,10 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
-import RouterOutletTab1 from './pages/RouterOutletTab1';
+import { ellipse, triangle } from 'ionicons/icons';
+import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
+import RouterOutletOnboarding from './pages/RouterOutletOnboarding';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -33,15 +31,6 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* import '@ionic/react/css/palettes/dark.always.css'; */
-/* import '@ionic/react/css/palettes/dark.class.css'; */
 import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
@@ -49,53 +38,53 @@ import './theme/variables.css';
 
 setupIonicReact();
 
+/**
+ * aria-hidden bug MRE
+ *
+ * Structure that triggers the bug:
+ * IonRouterOutlet (outer - gets aria-hidden="true" stuck)
+ * ├─ Route /onboarding/* → RouterOutletOnboarding
+ * │   └─ IonPage
+ * │       └─ IonRouterOutlet (inner)
+ * │           └─ Route verify-email → PageOnboardingVerifyEmail
+ * └─ Route /tabs/* → IonTabs
+ *     └─ IonRouterOutlet (tab outlet)
+ *
+ * Navigation from /tabs to /onboarding triggers the bug.
+ */
+
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonRouterOutlet>
-        <Route
-          path="/no-tab"
-          element={
-            <IonPage>
-              <IonContent>
-                <p>no tabs</p>
-              </IonContent>
-            </IonPage>
-          }
-        />
+      <IonRouterOutlet id="outer-outlet">
+        {/* Route with nested IonRouterOutlet inside IonPage */}
+        <Route path="/onboarding/*" element={<RouterOutletOnboarding />} />
+
+        {/* Tabs route */}
         <Route
           path="*"
           element={
             <IonTabs>
-              <IonRouterOutlet>
-                <Route path="tab1/*" element={<RouterOutletTab1 />} />
+              <IonRouterOutlet id="tabs-outlet">
+                <Route path="tab1" element={<Tab1 />} />
                 <Route path="tab2" element={<Tab2 />} />
-                <Route path="tab3" element={<Tab3 />} />
-                <Route path="/" element={<Navigate to="/tab1" />} />
-                {/* The present of this 404 route causes absolute links to fail to resolve */}
-                <Route path="*" element={<IonPage>
-                  <IonContent>
-                    <p>404</p>
-                  </IonContent>
-                </IonPage>} />
               </IonRouterOutlet>
               <IonTabBar slot="bottom">
-                <IonTabButton tab="tab1" href="/tab1">
+                <IonTabButton tab="tab1" href="/tabs/tab1">
                   <IonIcon aria-hidden="true" icon={triangle} />
                   <IonLabel>Tab 1</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="tab2" href="/tab2">
+                <IonTabButton tab="tab2" href="/tabs/tab2">
                   <IonIcon aria-hidden="true" icon={ellipse} />
                   <IonLabel>Tab 2</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="tab3" href="/tab3">
-                  <IonIcon aria-hidden="true" icon={square} />
-                  <IonLabel>Tab 3</IonLabel>
                 </IonTabButton>
               </IonTabBar>
             </IonTabs>
           }
         />
+
+        {/* Default redirect */}
+        <Route path="/" element={<Navigate to="/tabs/tab1" replace />} />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
