@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
+  IonModal,
   IonPage,
   IonSpinner,
   IonTitle,
@@ -13,11 +15,13 @@ import './Tab1.css';
 
 const Tab1: React.FC = () => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleNavigate = () => {
     setIsLoading(true);
     setTimeout(() => {
+      setIsModalOpen(false);
       navigate('/onboarding/verify-email');
     }, 2000);
   };
@@ -43,20 +47,12 @@ const Tab1: React.FC = () => {
         </p>
 
         <IonButton
-          id="navigate-button"
+          id="open-modal-button"
           expand="block"
-          onClick={handleNavigate}
-          disabled={isLoading}
+          onClick={() => setIsModalOpen(true)}
           style={{ marginTop: '24px' }}
         >
-          {isLoading ? (
-            <>
-              <IonSpinner name="crescent" style={{ marginRight: '8px' }} />
-              Redirecting in 2s...
-            </>
-          ) : (
-            'Go to /onboarding/verify-email'
-          )}
+          Open Modal
         </IonButton>
 
         <div
@@ -69,13 +65,48 @@ const Tab1: React.FC = () => {
         >
           <strong>Reproduction steps:</strong>
           <ol style={{ marginBottom: 0 }}>
-            <li>Click the button above</li>
+            <li>Click &quot;Open Modal&quot;</li>
+            <li>Click the navigate button inside the modal</li>
             <li>Wait 2 seconds for the redirect</li>
             <li>Check the indicator on the next page</li>
-            <li>Open DevTools and check the console</li>
-            <li>Inspect the outer ion-router-outlet element</li>
+            <li>Inspect #outer-outlet for aria-hidden=&quot;true&quot;</li>
           </ol>
         </div>
+
+        <IonModal isOpen={isModalOpen} onDidDismiss={() => setIsModalOpen(false)}>
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Navigate from Modal</IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={() => setIsModalOpen(false)}>Close</IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent className="ion-padding">
+            <p>
+              Navigating from inside a modal triggers the aria-hidden bug.
+              The modal sets aria-hidden on the router outlet, but it doesn&apos;t
+              get cleaned up properly after navigation.
+            </p>
+
+            <IonButton
+              id="navigate-button"
+              expand="block"
+              onClick={handleNavigate}
+              disabled={isLoading}
+              style={{ marginTop: '24px' }}
+            >
+              {isLoading ? (
+                <>
+                  <IonSpinner name="crescent" style={{ marginRight: '8px' }} />
+                  Redirecting in 2s...
+                </>
+              ) : (
+                'Go to /onboarding/verify-email'
+              )}
+            </IonButton>
+          </IonContent>
+        </IonModal>
       </IonContent>
     </IonPage>
   );
