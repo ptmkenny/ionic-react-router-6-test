@@ -1,21 +1,18 @@
 import { Route } from 'react-router-dom';
 import {
-  IonPage,
   IonRouterOutlet,
 } from '@ionic/react';
 import Tab1 from './Tab1';
 
 /**
  * Router outlet for Tab 1 - each tab has its own nested IonRouterOutlet.
- * This matches the original structure where tabs have their own outlets.
+ * Critical: No IonPage wrapper - main app does not wrap nested outlets in IonPage.
  */
 const RouterOutletTab1: React.FC = () => {
   return (
-    <IonPage>
-      <IonRouterOutlet id="tab1-outlet">
-        <Route index element={<Tab1 />} />
-      </IonRouterOutlet>
-    </IonPage>
+    <IonRouterOutlet id="tab1-outlet">
+      <Route index element={<Tab1 />} />
+    </IonRouterOutlet>
   );
 };
 

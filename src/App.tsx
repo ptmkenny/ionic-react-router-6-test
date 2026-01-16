@@ -1,10 +1,10 @@
-import { Navigate, Route } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import RouterOutletOnboarding from './pages/RouterOutletOnboarding';
 import RouterOutletTab1 from './pages/RouterOutletTab1';
 import RouterOutletTab2 from './pages/RouterOutletTab2';
-import WrapperIonTabs from './pages/WrapperIonTabs';
+import WrapperIonTabsWithOutlet from './pages/WrapperIonTabsWithOutlet';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -35,12 +35,14 @@ setupIonicReact();
  * Structure that triggers the bug:
  * IonRouterOutlet (outer - gets aria-hidden="true" stuck)
  * ├─ Route /onboarding/* → RouterOutletOnboarding
- * │   └─ IonPage
- * │       └─ IonRouterOutlet (inner)
+ * │   └─ Suspense
+ * │       └─ IonRouterOutlet (onboarding-outlet - no IonPage wrapper)
  * │           └─ Route verify-email → PageOnboardingVerifyEmail
- * └─ Routes for tabs (tab1/*, tab2/*)
- *     └─ WrapperIonTabs
- *         └─ IonTabs with IonRouterOutlet
+ * ├─ Route /tab1/* → WrapperIonTabsWithOutlet
+ * │   └─ IonTabs
+ * │       └─ IonRouterOutlet (tabs-outlet)
+ * │           └─ Route /tab1/* → RouterOutletTab1
+ * └─ Route /tab2/* → WrapperIonTabsWithOutlet (same component)
  *
  * Navigation from tabs to /onboarding triggers the bug.
  */
@@ -49,12 +51,13 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet id="outer-outlet">
-        {/* Route with nested IonRouterOutlet inside IonPage */}
+        {/* Route with nested IonRouterOutlet (no IonPage wrapper) */}
         <Route path="/onboarding/*" element={<RouterOutletOnboarding />} />
 
-        {/* Tabs routes - explicit paths */}
-        <Route path="/tab1/*" element={<WrapperIonTabs />} />
-        <Route path="/tab2/*" element={<WrapperIonTabs />} />
+        {/* Tab routes - WrapperIonTabs with inline outlet */}
+        <Route path="/tab1/*" element={<WrapperIonTabsWithOutlet />} />
+        <Route path="/tab2/*" element={<WrapperIonTabsWithOutlet />} />
+        <Route path="/" element={<Navigate to="/tab1" replace />} />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
