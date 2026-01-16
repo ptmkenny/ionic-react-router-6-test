@@ -64,7 +64,7 @@ const PageOnboardingVerifyEmail: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/tabs/tab1" />
+            <IonBackButton defaultHref="/tab1" />
           </IonButtons>
           <IonTitle>Verify Email</IonTitle>
         </IonToolbar>
@@ -103,7 +103,7 @@ const PageOnboardingVerifyEmail: React.FC = () => {
         <IonButton
           expand="block"
           style={{ marginTop: '24px' }}
-          routerLink="/tabs/tab1"
+          routerLink="/tab1"
         >
           Back to Tab 1
         </IonButton>

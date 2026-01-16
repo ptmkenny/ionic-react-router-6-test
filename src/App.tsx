@@ -1,19 +1,10 @@
 import { Navigate, Route } from 'react-router-dom';
-import {
-  IonApp,
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  setupIonicReact,
-} from '@ionic/react';
+import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, triangle } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
-import Tab2 from './pages/Tab2';
 import RouterOutletOnboarding from './pages/RouterOutletOnboarding';
+import RouterOutletTab1 from './pages/RouterOutletTab1';
+import RouterOutletTab2 from './pages/RouterOutletTab2';
+import WrapperIonTabs from './pages/WrapperIonTabs';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -47,10 +38,11 @@ setupIonicReact();
  * │   └─ IonPage
  * │       └─ IonRouterOutlet (inner)
  * │           └─ Route verify-email → PageOnboardingVerifyEmail
- * └─ Route /tabs/* → IonTabs
- *     └─ IonRouterOutlet (tab outlet)
+ * └─ Routes for tabs (tab1/*, tab2/*)
+ *     └─ WrapperIonTabs
+ *         └─ IonTabs with IonRouterOutlet
  *
- * Navigation from /tabs to /onboarding triggers the bug.
+ * Navigation from tabs to /onboarding triggers the bug.
  */
 
 const App: React.FC = () => (
@@ -60,31 +52,9 @@ const App: React.FC = () => (
         {/* Route with nested IonRouterOutlet inside IonPage */}
         <Route path="/onboarding/*" element={<RouterOutletOnboarding />} />
 
-        {/* Tabs route */}
-        <Route
-          path="*"
-          element={
-            <IonTabs>
-              <IonRouterOutlet id="tabs-outlet">
-                <Route path="tab1" element={<Tab1 />} />
-                <Route path="tab2" element={<Tab2 />} />
-              </IonRouterOutlet>
-              <IonTabBar slot="bottom">
-                <IonTabButton tab="tab1" href="/tabs/tab1">
-                  <IonIcon aria-hidden="true" icon={triangle} />
-                  <IonLabel>Tab 1</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="tab2" href="/tabs/tab2">
-                  <IonIcon aria-hidden="true" icon={ellipse} />
-                  <IonLabel>Tab 2</IonLabel>
-                </IonTabButton>
-              </IonTabBar>
-            </IonTabs>
-          }
-        />
-
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/tabs/tab1" replace />} />
+        {/* Tabs routes - explicit paths */}
+        <Route path="/tab1/*" element={<WrapperIonTabs />} />
+        <Route path="/tab2/*" element={<WrapperIonTabs />} />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>

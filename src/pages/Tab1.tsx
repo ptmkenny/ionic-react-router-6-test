@@ -1,14 +1,27 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   IonButton,
   IonContent,
   IonHeader,
   IonPage,
+  IonSpinner,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
 import './Tab1.css';
 
 const Tab1: React.FC = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleNavigate = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      navigate('/onboarding/verify-email');
+    }, 2000);
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -32,10 +45,18 @@ const Tab1: React.FC = () => {
         <IonButton
           id="navigate-button"
           expand="block"
-          routerLink="/onboarding/verify-email"
+          onClick={handleNavigate}
+          disabled={isLoading}
           style={{ marginTop: '24px' }}
         >
-          Go to /onboarding/verify-email
+          {isLoading ? (
+            <>
+              <IonSpinner name="crescent" style={{ marginRight: '8px' }} />
+              Redirecting in 2s...
+            </>
+          ) : (
+            'Go to /onboarding/verify-email'
+          )}
         </IonButton>
 
         <div
@@ -49,6 +70,7 @@ const Tab1: React.FC = () => {
           <strong>Reproduction steps:</strong>
           <ol style={{ marginBottom: 0 }}>
             <li>Click the button above</li>
+            <li>Wait 2 seconds for the redirect</li>
             <li>Check the indicator on the next page</li>
             <li>Open DevTools and check the console</li>
             <li>Inspect the outer ion-router-outlet element</li>
