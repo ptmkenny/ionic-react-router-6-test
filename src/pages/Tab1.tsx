@@ -21,7 +21,7 @@ const Tab1: React.FC = () => {
   const handleNavigate = () => {
     setIsLoading(true);
     setTimeout(() => {
-      setIsModalOpen(false);
+      // setIsModalOpen(false);
       navigate('/onboarding/verify-email');
     }, 2000);
   };
@@ -42,8 +42,9 @@ const Tab1: React.FC = () => {
 
         <h2>aria-hidden Bug MRE</h2>
         <p>
-          This demonstrates a bug where aria-hidden=&quot;true&quot; gets stuck on
-          the outer ion-router-outlet after navigating from tabs to a nested outlet.
+          This demonstrates a bug where aria-hidden=&quot;true&quot; gets stuck
+          on the outer ion-router-outlet after navigating from tabs to a nested
+          outlet.
         </p>
 
         <IonButton
@@ -73,19 +74,24 @@ const Tab1: React.FC = () => {
           </ol>
         </div>
 
-        <IonModal isOpen={isModalOpen} onDidDismiss={() => setIsModalOpen(false)}>
+        <IonModal
+          isOpen={isModalOpen}
+          onDidDismiss={() => setIsModalOpen(false)}
+        >
           <IonHeader>
             <IonToolbar>
               <IonTitle>Navigate from Modal</IonTitle>
               <IonButtons slot="end">
-                <IonButton onClick={() => setIsModalOpen(false)}>Close</IonButton>
+                <IonButton onClick={() => setIsModalOpen(false)}>
+                  Close
+                </IonButton>
               </IonButtons>
             </IonToolbar>
           </IonHeader>
           <IonContent className="ion-padding">
             <p>
-              Navigating from inside a modal triggers the aria-hidden bug.
-              The modal sets aria-hidden on the router outlet, but it doesn&apos;t
+              Navigating from inside a modal triggers the aria-hidden bug. The
+              modal sets aria-hidden on the router outlet, but it doesn&apos;t
               get cleaned up properly after navigation.
             </p>
 
