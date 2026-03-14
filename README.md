@@ -65,7 +65,7 @@ After navigating from `/tab1` to `/onboarding/verify-email`:
 
 ## Root Cause
 
-See `ionic/router-aria-hidden.md` for detailed analysis. The issue is:
+See `router-aria-hidden.md` for detailed analysis. The issue is:
 1. `OutletPageManager` registers outlets as "pages"
 2. Transition logic sets `aria-hidden="true"` on "leaving pages"
 3. The outlet is marked as leaving but remains visible (it contains the new route)
