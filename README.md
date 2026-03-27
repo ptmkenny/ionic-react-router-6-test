@@ -1,72 +1,49 @@
-# aria-hidden Bug MRE
+# React Error #185 Ionic Router MRE
 
-Minimum reproducible example demonstrating the `aria-hidden="true"` bug in Ionic React Router.
+This repository is a minimal reproducible example for a React runtime crash triggered by Ionic React Router.
 
-## Bug Summary
+## Affected Ionic build
 
-`aria-hidden="true"` persists on `ion-router-outlet` after navigating from a tabs route to a nested outlet route. This breaks accessibility and causes Playwright tests to fail with "no locator visible before timeout".
+- Bad: `8.8.1-dev.11774273905.1c3b9598`
+- Known good: `8.8.1-dev.11773432149.19826d0c`
 
-## Routing Structure
+## Bug summary
 
-This structure matches the original bug report exactly:
+A nested Ionic router structure that should render a normal fallback error page instead crashes with the React production error `#185`.
 
-```
-IonRouterOutlet (outer - gets aria-hidden="true" stuck)
-├─ Route /onboarding/* → RouterOutletOnboarding
-│   └─ IonPage
-│       └─ IonRouterOutlet (inner)
-│           └─ Route verify-email → PageOnboardingVerifyEmail
-└─ Route * → IonTabs (catch-all for tabs)
-    └─ IonRouterOutlet (tab outlet)
-        └─ Tab pages (/tab1, /tab2)
-```
+Expected behavior:
+- the content index suspends while loading five recent Hacker News stories
+- navigating to a non-loaded item renders a normal Ionic error page
+- the page body contains `Failed to load item with id story-not-loaded`
 
-Navigation from the `*` route (tabs) to `/onboarding` triggers the bug.
+Actual behavior on the bad build:
+- the app crashes before the fallback page is usable
+- the browser shows the React production error `#185`
 
-## Versions
+## Route structure
 
-- `@ionic/react`: ^8.7.13-dev.11766090775.11e2bebb
-- `@ionic/react-router`: ^8.7.13-dev.11766090775.11e2bebb
-- `react-router-dom`: ^6.30.3
+- outer `IonRouterOutlet`
+- tabs wrapper route using `IonTabs`
+- nested `IonRouterOutlet` for tab routes
+- nested `IonRouterOutlet` for `/content/*`
+- Suspense-backed Hacker News query shared by the content index and item page
+- dynamic `/content/pages/:resourceId` route that falls back to a generic `PageError`
 
-## Reproduction Steps
+## Reproduction steps
 
-1. Install dependencies:
-   ```bash
-   npm install --legacy-peer-deps
-   ```
+1. Install dependencies.
+2. Start the dev server with `npm run dev`.
+3. Open `/tab1`.
+4. Click `Go to Content index`.
+5. Wait for the five Hacker News stories to load.
+6. Click `Open non-loaded item`.
+7. Observe the crash on the bad Ionic build.
 
-2. Start the dev server:
-   ```bash
-   npm run dev
-   ```
+## Version check
 
-3. Open http://localhost:5173/tab1 in your browser (tabs are at root level via catch-all)
+To confirm the regression boundary:
 
-4. Click the "Go to /onboarding/verify-email" button
-
-5. Observe:
-   - The page displays a red indicator showing "BUG DETECTED: aria-hidden='true' on outer outlet!"
-   - Open DevTools console to see the error message
-   - Inspect the `#outer-outlet` element - it has `aria-hidden="true"` even though it contains visible content
-
-**Important:** You must navigate FROM the tabs route TO /onboarding. Going directly to /onboarding will not trigger the bug because the transition logic is what sets aria-hidden.
-
-## Expected Behavior
-
-The outer `ion-router-outlet` should NOT have `aria-hidden="true"` when it contains the active page.
-
-## Actual Behavior
-
-After navigating from `/tab1` to `/onboarding/verify-email`:
-1. The outer `ion-router-outlet` (id="outer-outlet") has `aria-hidden="true"` stuck on it
-2. All content inside is hidden from the accessibility tree
-3. `getByRole()` and similar accessibility queries cannot find elements inside
-
-## Root Cause
-
-See `router-aria-hidden.md` for detailed analysis. The issue is:
-1. `OutletPageManager` registers outlets as "pages"
-2. Transition logic sets `aria-hidden="true"` on "leaving pages"
-3. The outlet is marked as leaving but remains visible (it contains the new route)
-4. No cleanup occurs because the outlet isn't "entering"
+1. Run the repro on `8.8.1-dev.11774273905.1c3b9598` and observe the crash.
+2. Change Ionic packages to `8.8.1-dev.11773432149.19826d0c`.
+3. Reinstall dependencies and rerun.
+4. The fallback error page should render normally on the older build.
