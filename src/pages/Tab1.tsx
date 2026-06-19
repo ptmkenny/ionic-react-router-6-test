@@ -21,6 +21,9 @@ const Tab1: React.FC = () => (
       <IonButton expand="block" routerLink="/content">
         Go to Content index
       </IonButton>
+      <IonButton expand="block" routerLink="/tab1/validation">
+        className clobbering validation MRE
+      </IonButton>
     </IonContent>
   </IonPage>
 );
