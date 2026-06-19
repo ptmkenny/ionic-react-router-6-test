@@ -82,10 +82,16 @@ const PageReproValidationClassName: React.FC = () => {
               labelPlacement="stacked"
               fill="solid"
               errorText="Enter your email."
-              className={validated ? 'ion-invalid ion-touched' : ''}
+              className={validated ? 'ion-invalid ion-touched' : 'ion-valid'}
             />
           </IonItem>
         </IonList>
+
+        <p>
+          Tip: press <em>Inspect</em> first to see the healthy{' '}
+          <code>ion-valid</code> + Stencil classes, then <em>Apply</em>, then{' '}
+          <em>Inspect</em> again to see them wiped.
+        </p>
 
         <IonButton
           expand="block"
