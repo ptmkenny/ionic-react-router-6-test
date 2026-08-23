@@ -6,7 +6,7 @@
  * BrowserRouter, NuqsAdapter, and one component, so what it shows is the
  * adapter's contract with react-router and nothing else.
  *
- * Served at /nuqs-repro.html — see README-nuqs-repro.md.
+ * Served at the site root — see README-nuqs-repro.md.
  */
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
