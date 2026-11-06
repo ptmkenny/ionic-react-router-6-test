@@ -1,85 +1,194 @@
-import { Redirect, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, Route, useSearchParams } from 'react-router-dom';
 import {
   IonApp,
-  IonIcon,
+  IonButton,
+  IonContent,
+  IonHeader,
   IonLabel,
+  IonPage,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
   IonTabs,
-  setupIonicReact
+  IonTitle,
+  IonToolbar,
+  setupIonicReact,
+  useIonRouter,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
-import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
-
-/* Basic CSS for apps built with Ionic */
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
 
-/* Optional CSS utils that can be commented out */
-import '@ionic/react/css/padding.css';
-import '@ionic/react/css/float-elements.css';
-import '@ionic/react/css/text-alignment.css';
-import '@ionic/react/css/text-transformation.css';
-import '@ionic/react/css/flex-utils.css';
-import '@ionic/react/css/display.css';
+setupIonicReact();
+
+const ApplePage: React.FC = () => (
+  <IonPage>
+    <IonHeader>
+      <IonToolbar>
+        <IonTitle>Apple</IonTitle>
+      </IonToolbar>
+    </IonHeader>
+    <IonContent className="ion-padding">
+      <p>Press the Orange tab, then a redirect button.</p>
+    </IonContent>
+  </IonPage>
+);
 
 /**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
+ * 0 ms redirects in the render that mounts the banana outlet (path B). 10-20 ms lets the
+ * forward transition to the banana outlet start first (path A). 50 ms is a control: the
+ * transition finishes before the redirect, and only Apple is left visible.
  */
+const redirectDelaysMs = [0, 10, 20, 50];
 
-/* import '@ionic/react/css/palettes/dark.always.css'; */
-/* import '@ionic/react/css/palettes/dark.class.css'; */
-import '@ionic/react/css/palettes/dark.system.css';
+/** The delay of the last redirect button pressed, for the status bar. */
+let lastDelayMs: number | undefined;
 
-/* Theme variables */
-import './theme/variables.css';
+/** An auth guard for anonymous users: redirects to /apple, optionally after a delay. */
+const RedirectToApple: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const delayMs = Number(searchParams.get('delay') ?? 0);
+  const [redirect, setRedirect] = useState(delayMs === 0);
+  useEffect(() => {
+    if (delayMs === 0) {
+      return undefined;
+    }
+    const timeout = setTimeout(() => setRedirect(true), delayMs);
+    return () => clearTimeout(timeout);
+  }, [delayMs]);
+  return redirect ? <Navigate replace to="/apple" /> : null;
+};
 
-setupIonicReact();
+const OrangePage: React.FC = () => {
+  const router = useIonRouter();
+  return (
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Orange</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-padding">
+        <p>/banana/redirect redirects anonymous users to /apple after the delay in the URL.</p>
+        {redirectDelaysMs.map((delayMs) => (
+          <IonButton
+            key={delayMs}
+            onClick={() => {
+              lastDelayMs = delayMs;
+              router.push(`/banana/redirect?delay=${delayMs}`, 'forward', 'push');
+            }}
+          >
+            Redirect after {delayMs} ms
+          </IonButton>
+        ))}
+      </IonContent>
+    </IonPage>
+  );
+};
+
+/** Names the tab outlets that are not hidden, by their class. */
+const visibleTabOutlets = (): string[] => {
+  const tabsOutlet = document.querySelector('ion-tabs ion-router-outlet');
+  if (!tabsOutlet) {
+    return [];
+  }
+  return Array.from(tabsOutlet.children)
+    .filter((child): child is HTMLElement => child instanceof HTMLElement)
+    .filter((child) => child.classList.contains('ion-page') && !child.classList.contains('ion-page-hidden'))
+    .map((child) => {
+      const name = ['apple', 'orange', 'banana'].find((outlet) => child.classList.contains(`${outlet}-outlet`)) ?? '?';
+      return child.childElementCount === 0 ? `${name} (empty)` : name;
+    });
+};
+
+/** Reports, outside the router, how many tab outlets are visible after each redirect. */
+const Status: React.FC = () => {
+  const [results, setResults] = useState<string[]>([]);
+  useEffect(() => {
+    let lastPath = window.location.pathname;
+    const interval = setInterval(() => {
+      const path = window.location.pathname;
+      if (path === '/apple' && lastPath !== '/apple') {
+        const delayMs = lastDelayMs;
+        setTimeout(() => {
+          const visible = visibleTabOutlets();
+          const path = visible.some((name) => name.startsWith('banana'))
+            ? ' ← BUG path A'
+            : visible.some((name) => name.startsWith('orange'))
+              ? ' ← BUG path B'
+              : '';
+          setResults((all) => [...all, `${delayMs ?? '?'} ms: ${visible.join(' + ')}${path}`]);
+        }, 1000);
+      }
+      lastPath = path;
+    }, 20);
+    return () => clearInterval(interval);
+  }, []);
+  const stale = results.filter((r) => r.includes('BUG')).length;
+  return (
+    <div
+      data-testid="status"
+      style={{ position: 'fixed', bottom: 60, left: 0, right: 0, zIndex: 99999, padding: 8, background: '#ffd', color: '#000', fontFamily: 'monospace' }}
+    >
+      Redirects: {results.length} · more than one tab outlet visible: {stale}
+      {results.length > 0 ? ` · last: ${results[results.length - 1]}` : ''}
+    </div>
+  );
+};
 
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/tab1">
-            <Tab1 />
-          </Route>
-          <Route exact path="/tab2">
-            <Tab2 />
-          </Route>
-          <Route path="/tab3">
-            <Tab3 />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/tab1" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon aria-hidden="true" icon={triangle} />
-            <IonLabel>Tab 1</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon aria-hidden="true" icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon aria-hidden="true" icon={square} />
-            <IonLabel>Tab 3</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
+      <IonRouterOutlet>
+        <Route path="/" element={<Navigate replace to="/apple" />} />
+        <Route
+          path="*"
+          element={
+            <IonTabs>
+              <IonRouterOutlet>
+                <Route
+                  path="/apple/*"
+                  element={
+                    <IonRouterOutlet ionPage className="apple-outlet">
+                      <Route index element={<ApplePage />} />
+                    </IonRouterOutlet>
+                  }
+                />
+                <Route
+                  path="/orange/*"
+                  element={
+                    <IonRouterOutlet ionPage className="orange-outlet">
+                      <Route index element={<OrangePage />} />
+                    </IonRouterOutlet>
+                  }
+                />
+                <Route
+                  path="/banana/*"
+                  element={
+                    <IonRouterOutlet ionPage className="banana-outlet">
+                      <Route path="redirect" element={<RedirectToApple />} />
+                    </IonRouterOutlet>
+                  }
+                />
+              </IonRouterOutlet>
+              <IonTabBar slot="bottom">
+                <IonTabButton tab="apple" href="/apple">
+                  <IonLabel>Apple</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="orange" href="/orange">
+                  <IonLabel>Orange</IonLabel>
+                </IonTabButton>
+              </IonTabBar>
+            </IonTabs>
+          }
+        />
+      </IonRouterOutlet>
+      <Status />
     </IonReactRouter>
   </IonApp>
 );
